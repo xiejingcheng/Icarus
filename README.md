@@ -1,2 +1,2 @@
 # Icarus
- a deeplearning fram
+ a deeplearning framework
