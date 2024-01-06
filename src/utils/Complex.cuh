@@ -7,7 +7,7 @@ public:
 
     }
 
-    //¹¹Ôìº¯Êı
+    //æ„é€ å‡½æ•°
     __device__ Complex(double real , double imag){
         Complex c;
         this->real = real;
@@ -15,7 +15,7 @@ public:
         return c;
     }
 
-    //»ñÈ¡µ¥Î»¸ù
+    //è·å–å•ä½æ ¹
     __device__ static Complex w(int n){
         Complex res = Complex(cos(2.0 * PI / n), sin(2.0 * PI / n));
         return res;
