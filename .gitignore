@@ -2,3 +2,5 @@
 *.exp
 *.lib
 .vscode/
+.metadata/
+RemoteSystemsTempFiles/
