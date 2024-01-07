@@ -5,18 +5,21 @@
 #include <cublas_v2.h>
 #include <cuda_runtime.h>
 
+
+
 //这个版本比较简单，就是一个线程负责计算结果的一个点。但是每次都是从全局里面取内存，有问题。
+//这里需要理解就是二维数组到一纬的转化，需要的是，一维里面是按照行顺序存储的。然而二维数组是 c[y][x] = c[y * n + x]
 template <int BLOCK>
 __global__ void sgemmV1(int m, int n, int k, float *a, int lda, float *b, int ldb, float *c, int ldc) {
     //这里不是用 blockDim 因为固定分块大小 这个似乎就是一样的
-    int _m = blockIdx.x * BLOCK + threadIdx.x;
-    int _n = blockIdx.y * BLOCK + threadIdx.y;
-    if (_m < m and _n < n){
+    int _x = blockIdx.x * BLOCK + threadIdx.x;
+    int _y = blockIdx.y * BLOCK + threadIdx.y;
+    if (_m < m && _n < n){
         float sum = 0.f;
         for(int i = 0; i < k; i++){
-            sum += a[_m * k + i] * b[k * n + _n];
+            sum += a[_y * k + i] * b[i * n + _x];
         }
-        c[_m * n + _n] = sum;
+        c[_y * n + _x] = sum;
     }
 }
 
@@ -29,7 +32,7 @@ __global__ void sgemmV2 (int m, int n, int k, float *a, int lda, float *b, int l
     const int bx = blockIdx.x;
     const int by = blockIdx.y;
 
-    //定义a在y方向上的偏移 定义b在x上的偏移
+    //begin_a定义的是，在
     float *begin_a = a + by * BLOCK * k;
     float *begin_b = b + bx * BLOCK;
     float *end_a = begin_a + k;
@@ -53,7 +56,7 @@ __global__ void sgemmV2 (int m, int n, int k, float *a, int lda, float *b, int l
      bshare[ty][tx] = b_ptr[ty * n + tx];
      __syncthreads();
  
- #pragma unroll
+    #pragma unroll
      for (int kk = 0; kk < BLOCK; ++kk) {
        sum += ashare[ty][kk] * bshare[kk][tx];
      }
@@ -73,5 +76,10 @@ constexpr int BLOCK = 16;
 dim3 block(BLOCK, BLOCK);
 dim3 grid((m + BLOCK - 1) / BLOCK, (n + BLOCK - 1) / BLOCK);
 
-sgemm<BLOCK><<<grid, block>>>(m, n, k, d_A, lda, d_B, ldb, d_C, ldc);
+sgemmV1<BLOCK><<<grid, block>>>(m, n, k, d_A, lda, d_B, ldb, d_C, ldc);
+}
+
+int main(){
+    printf("sss");
+    return 0;
 }
