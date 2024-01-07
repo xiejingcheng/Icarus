@@ -1,14 +1,24 @@
-#include "../../utils/Complex.cuh"
+// 一维FFT
+#include "cuda_runtime.h"
+#include "device_launch_parameters.h"
+#include "../../utils/Complex.cuh"  // 自定义的复数数据结构
+#include <iostream>
+#include <string>
+#include <stdlib.h>
+#include <time.h>
+#include <Windows.h>
 
-int getBits(int n){
+
+int GetBits(int n) {
     int bits = 0;
-    while(n >>= 1){
+    while (n >>= 1) {
         bits++;
     }
     return bits;
 }
 
-__device__ int binaryReverse(int i, int bits) {
+
+__device__ int BinaryReverse(int i, int bits) {
     int r = 0;
     do {
         r += i % 2 << --bits;
@@ -16,25 +26,15 @@ __device__ int binaryReverse(int i, int bits) {
     return r;
 }
 
-__device__ void bufferfly(Complex *a, Complex *b, Complex factor) {
+
+__device__ void Bufferfly(Complex *a, Complex *b, Complex factor) {
     Complex a1 = (*a) + factor * (*b);
     Complex b1 = (*a) - factor * (*b);
     *a = a1;
     *b = b1;
 }
 
-__global__ void Reduce(int nums[], int n) {
-    int tid = threadIdx.x + blockDim.x * blockIdx.x;
-    if (tid >= n) return;
-    for (int i = 2; i < 2 * n; i *= 2) {
-        if (tid % i == 0) {
-            nums[tid] += nums[tid + i / 2];
-        }
-        __syncthreads();
-    }
-}
-
-__global__ void FFTCooleyTurkeyV1(Complex nums[], Complex result[], int n, int bits) {
+__global__ void FFT(Complex nums[], Complex result[], int n, int bits) {
     int tid = threadIdx.x + blockDim.x * blockIdx.x;
     if (tid >= n) return;
     for (int i = 2; i < 2 * n; i *= 2) {
@@ -50,26 +50,55 @@ __global__ void FFTCooleyTurkeyV1(Complex nums[], Complex result[], int n, int b
     result[tid] = nums[BinaryReverse(tid, bits)];
 }
 
-// __global__ void reverseNums(Complex nums[], Complex revnums[], int n, int bits) {
-//     int tid = threadIdx.x + blockDim.x * blockIdx.x;
-//     if (tid <= n){
-//         revnums[tid] = nums[BinaryReverse(tid, bits)];
-//     }
-//     __syncthreads();
-// }
 
-//我的想法是原地给他排好序号，但是我不知道怎么找对应的编号
-//按照我的想法应该可以降低到O(log n)
-__global__ void FFTCooleyTurkeyV2(Complex nums[], Complex result[], int n, int bits) {
-    int tid = threadIdx.x + blockDim.x * blockIdx.x;
-    if (tid <= n){
-        result[tid] = nums[BinaryReverse(tid, bits)];
+void printSequence(Complex nums[], const int N) {
+    printf("[");
+    for (int i = 0; i < N; ++i) {
+        double real = nums[i].real, imag = nums[i].imag;
+        if (imag == 0) printf("%.16f", real);
+        else {
+            if (imag > 0) printf("%.16f+%.16fi", real, imag);
+            else printf("%.16f%.16fi", real, imag);
+        }
+        if (i != N - 1) printf(", ");
     }
-    __syncthreads();
+    printf("]\n");
+}
 
-    // for (int i = 1; i <= 2 * n; i *= 2) {
-    //     if()
-    // }
+int main() {
+    srand(time(0));  
+    const int TPB = 1024;  
+    const int N = 1024 * 32;  
+    const int bits = GetBits(N);
+    
+    Complex *nums = (Complex*)malloc(sizeof(Complex) * N), *dNums, *dResult;
+    for (int i = 0; i < N; ++i) {
+        nums[i] = Complex::GetRandomReal();
+    }
+    printf("Length of Sequence: %d\n", N);
 
+    float s = GetTickCount();
+    
+
+    cudaMalloc((void**)&dNums, sizeof(Complex) * N);
+    cudaMalloc((void**)&dResult, sizeof(Complex) * N);
+    cudaMemcpy(dNums, nums, sizeof(Complex) * N, cudaMemcpyHostToDevice);
+    
+ 
+    dim3 threadPerBlock = dim3(TPB);
+    dim3 blockNum = dim3((N + threadPerBlock.x - 1) / threadPerBlock.x);
+    FFT<<<blockNum, threadPerBlock>>>(dNums, dResult, N, bits);
+
+   
+    cudaMemcpy(nums, dResult, sizeof(Complex) * N, cudaMemcpyDeviceToHost);
+    
+   
+    float cost = GetTickCount() - s;
+    
+    printf("Time of Transfromation: %fms", cost);
+  
+    free(nums);
+    cudaFree(dNums);
+    cudaFree(dResult);
 }
 
