@@ -69,6 +69,11 @@ __global__ void sgemmV2 (int m, int n, int k, float *a, int lda, float *b, int l
 
 }
 
+template<int BLOCK>
+__global__ void sgemmV3 (int m, int n, int k, float *a, int lda, float *b, int ldb, float *c, int ldc){
+    
+}
+
 void mmult(cublasHandle_t handle, int m, int n, int k, float *d_A, int lda,
     float *d_B, int ldb, float *d_C, int ldc) {
 

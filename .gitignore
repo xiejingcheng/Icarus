@@ -1,6 +1,9 @@
 *.exe
 *.exp
 *.lib
+*__pycache__/
+.idea/
 .vscode/
 .metadata/
+.conda/
 RemoteSystemsTempFiles/
