@@ -6,4 +6,5 @@
 .vscode/
 .metadata/
 .conda/
+condaenv/
 RemoteSystemsTempFiles/
