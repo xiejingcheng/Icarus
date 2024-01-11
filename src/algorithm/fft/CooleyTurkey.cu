@@ -1,7 +1,6 @@
-// 一维FFT
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
-#include "../../utils/Complex.cuh"  // 自定义的复数数据结构
+#include "../../utils/Complex.cuh"
 #include <iostream>
 #include <string>
 #include <stdlib.h>
