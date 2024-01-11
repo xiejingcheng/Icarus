@@ -1,5 +1,10 @@
 import numpy as np
 from utils import as_array
+import weakref
+import contextlib
+
+class Config:
+    enable_backprop = True
 
 class Variable:
     def __init__(self, data) -> None:
@@ -18,7 +23,7 @@ class Variable:
     def cleargrad(self):
         self.grad = None
 
-    def backward(self):
+    def backward(self, ratain_grad=False):
         if self.grad is None:
             self.grad = np.ones_like(self.data)
 
@@ -35,7 +40,7 @@ class Variable:
 
         while funcs:
             f = funcs.pop()
-            gys = [output.grad for output in f.outputs]
+            gys = [output().grad for output in f.outputs]
             gxs = f.backward(*gys)
             if not isinstance(gxs, tuple):
                 gxs = (gxs,)
@@ -49,6 +54,11 @@ class Variable:
                 if x.creator is not None:
                     addFunc(x.creator)
 
+            if not ratain_grad:
+                for y in f.outputs:
+                    y().grad = None
+
+
 class Function:
     def __init__(self):
         self.outputs = None
@@ -61,13 +71,15 @@ class Function:
         if not isinstance(ys, tuple):
             ys = (ys,)
         outputs = [Variable(as_array(y)) for y in ys]
-        
+
         #设定指针于代数
-        self.generation = max([x.generation for x in inputs])
-        for output in outputs:
-            output.setCreator(self)
+        #开启以后不会再引用，所有会被内存回收，最后CUDA实现的时候，可以手动删除
+        if Config.enable_backprop:
+            self.generation = max([x.generation for x in inputs])
+            for output in outputs:
+                output.setCreator(self)
         
-        self.outputs = outputs
+        self.outputs = [weakref.ref(output) for output in outputs]
         self.inputs = inputs
         return outputs if len(outputs) > 1 else outputs[0]
 
@@ -77,3 +89,15 @@ class Function:
     
     def backward(self, gys):
         raise NotImplementedError
+
+@contextlib.contextmanager 
+def usingConfig(name, value):
+    oldValue = getattr(Config, name)
+    setattr(Config, name, value)
+    try:
+        yield
+    finally:
+        setattr(Config, name, oldValue)
+
+def noGrad():
+    return usingConfig('enable_backprop', False)

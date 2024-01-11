@@ -9,7 +9,7 @@
 #include <time.h>
 #include <Windows.h>
 
-int getBits(int n) {
+int getBits(int n) { 
     int bits = 0;
     while (n >>= 1) {
         bits++;
@@ -85,7 +85,7 @@ int main() {
     dim3 threadPerBlock = dim3(TPB);
     dim3 blockNum = dim3((N + threadPerBlock.x - 1) / threadPerBlock.x);
 
-    
+
     FFT<<<blockNum, threadPerBlock>>>(dNums, dResult, N, bits);
 
    

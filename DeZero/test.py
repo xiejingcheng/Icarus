@@ -1,13 +1,13 @@
 import numpy as np
-from function import Square, Exp, square, exp
+from function import Square, Exp, square, exp, add
 from core import Variable, Function
 
 
 
-x = Variable(np.array(0.5))
+x = Variable(np.array(2.0))
 a = square(x)
-b = exp(a)
-y = square(b)
+y = add(square(a), square(a))
+
 
 # print(y.creator)
 # assert y.creator == C
@@ -17,10 +17,8 @@ y = square(b)
 # assert y.creator.input.creator.input.creator is A
 # assert y.creator.input.creator.input.creator.input is x
 
-print(y.data)
-
-y.grad = np.array(1.0)
 y.backward()
+print(y.data)
 print(x.grad)
 
 
