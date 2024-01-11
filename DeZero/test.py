@@ -1,12 +1,10 @@
 import numpy as np
-from function import Square, Exp, square, exp, add
 from core import Variable, Function
 
 
 
 x = Variable(np.array(2.0))
-a = square(x)
-y = add(square(a), square(a))
+y = -x
 
 
 # print(y.creator)
