@@ -3,7 +3,7 @@ import weakref
 import contextlib
 
 class Config:
-    enable_backprop = True
+    enableBackprop = True
 
 class Variable:
     __array_priority__ = 200
@@ -109,7 +109,7 @@ class Function:
 
         #设定指针于代数
         #开启以后不会再引用，所有会被内存回收，最后CUDA实现的时候，可以手动删除
-        if Config.enable_backprop:
+        if Config.enableBackprop:
             self.generation = max([x.generation for x in inputs])
             for output in outputs:
                 output.setCreator(self)
@@ -205,7 +205,7 @@ def mul(x0, x1):
     x1 = asArray(x1)
     return Mul()(x0, x1) 
 
-contextlib.contextmanager 
+@contextlib.contextmanager 
 def usingConfig(name, value):
     oldValue = getattr(Config, name)
     setattr(Config, name, value)
@@ -215,7 +215,7 @@ def usingConfig(name, value):
         setattr(Config, name, oldValue)
 
 def noGrad():
-    return usingConfig('enable_backprop', False)
+    return usingConfig('enableBackprop', False)
 
 def asVariable(obj):
     if isinstance(obj, Variable):

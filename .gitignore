@@ -7,4 +7,5 @@
 .metadata/
 .conda/
 condaenv/
+DeZeroPackage/test/
 RemoteSystemsTempFiles/
