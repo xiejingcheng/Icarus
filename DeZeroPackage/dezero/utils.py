@@ -65,3 +65,4 @@ def plotDotGraph(output, verbose=True, to_file='graph.png'):
         return display.Image(filename=to_file)
     except:
         pass
+
