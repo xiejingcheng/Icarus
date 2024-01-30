@@ -37,7 +37,7 @@ class Variable:
 
     @property
     def T(self):
-        return Variable(np.transpose(self.data))
+        return dezero.functions.transpose(self)
 
     def __len__(self):
         return len(self.data)
@@ -65,6 +65,9 @@ class Variable:
     
     def sum(self, axis=None, keepdims = False):
         return dezero.functions.sum(self, axis, keepdims)
+    
+    def transpose(self):    
+        return dezero.functions.transpose(self)
 
     def backward(self, ratainGrad=False, createGraph=False):
         if self.grad is None:
@@ -133,6 +136,9 @@ class Function:
     
     def backward(self, gys):
         raise NotImplementedError
+    
+class Parameter(Variable):
+    pass
 
 class Add(Function):
     def forward(self, x0, x1):

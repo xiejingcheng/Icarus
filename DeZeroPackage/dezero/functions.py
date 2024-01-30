@@ -123,3 +123,64 @@ def sumTo(x, shape):
     if x.shape == shape:
         return asVariable(x)
     return SumTo(shape)(x)
+
+class MatMul(Function):
+    def forward(self, x, W):
+        y = np.dot(x, W)
+        return y
+    
+    def backward(self, gy):
+        x, W = self.inputs
+        gx = matMul(gy, W.T)
+        gw = matMul(x.T, gy)
+
+def matMul(x, W):
+    return MatMul()(x, W)
+
+class MeanSquaredError(Function):
+    def forward(self, x0, x1):
+        diff = x0 - x1
+        y = (diff ** 2).sum() / len(diff)
+        return y
+
+    def backward(self, gy):
+        x0, x1 = self.inputs
+        diff = x0 - x1
+        gx0 = gy * diff * (2. / len(diff))
+        gx1 = -gx0
+        return gx0, gx1
+    
+def meanSquaredError(x0, x1):
+    return MeanSquaredError()(x0, x1)
+
+class Linear(Function):
+    def forward(self, x, W, b=None):
+        y = x.dot(W)
+        if b is not None:
+            y += b
+        return y
+    
+    def backward(self, gy):
+        x, W, b = self.inputs
+        gb = None if b.data is None else sumTo(gy, b.shape)
+        gx = matMul(gy, W.T)
+        gW = matMul(x.T, gy)
+        return gx, gW, gb
+    
+def linear(x, W, b=None):
+    return Linear()(x, W, b)
+
+class Sigmoid(Function):
+    def forward(self, x):
+        y = 1 / (1 + np.exp(-x))
+        return y
+    
+    def backward(self, gy):
+        y = self.outputs[0]()
+        gx = gy * y * (1 - y)
+        return gx
+    
+def sigmoid(x):
+    return Sigmoid()(x)
+        
+        
