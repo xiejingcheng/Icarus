@@ -18,5 +18,6 @@ else:
     from dezero.core import asVariable
     from dezero.core import asArray
     from dezero.core import setupVariable
+    from dezero.layers import Layer
 
 setupVariable()
