@@ -10,3 +10,4 @@ condaenv/
 DeZeroPackage/test/
 IcaZeroPackage/test/
 RemoteSystemsTempFiles/
+cmakelearn/test1/build

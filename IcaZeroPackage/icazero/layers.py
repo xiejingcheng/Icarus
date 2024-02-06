@@ -74,3 +74,21 @@ class Sigmoid(Layer):
     def forward(self, x):
         return F.sigmoid(x)
     
+class ReLU(Layer):
+    def __init__(self):
+        super().__init__()
+    
+    def forward(self, x):
+        return F.relu(x)
+
+class CNN(Layer):
+    def __init__(self, outChannel, kernelSize, stride=1, pad=0, nobias=False):
+        super().__init__()
+        self.outChannel = outChannel
+        self.kernelSize = kernelSize
+        self.stride = stride
+        self.pad = pad
+        self.nobias = nobias
+    
+    def forward(self, x):
+        return F.convolution2d(x, self.W, self.b, self.stride, self.pad)

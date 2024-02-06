@@ -52,6 +52,7 @@ class MomentumSGD(Optimizer):
 class Adam(Optimizer):
     '''
     Adam (http://arxiv.org/abs/1412.6980v8)
+    https://www.jianshu.com/p/62f2df588cb1
     '''
     def __init__(self, lr=0.001, beta1=0.9, beta2=0.999):
         super().__init__()
