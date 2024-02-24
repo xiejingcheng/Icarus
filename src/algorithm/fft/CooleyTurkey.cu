@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <Windows.h>
+#include <thrust/host_vector.h>
 
 
 int GetBits(int n) {

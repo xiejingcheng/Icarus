@@ -10,5 +10,6 @@ int main()
     printf("a - b = %d\n", subtract(a, b));
     printf("a * b = %d\n", multiply(a, b));
     printf("a / b = %f\n", divide(a, b));
+    scanf("%d", &a);
     return 0;
 }

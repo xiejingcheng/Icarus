@@ -5,6 +5,7 @@
 #include <string.h>
 #include <time.h>
 #include<chrono>
+#include <cublas_v2.h>
 
 // Feature maps dimensionality descriptions and assumptions:
 //             : Height          : Width           : Channels  : Number                    :
