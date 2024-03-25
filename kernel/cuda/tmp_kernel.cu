@@ -183,6 +183,7 @@ EXPORT int copy_on_device(cudamat* mat1, cudamat* mat2) {
         return 0;
 }
 
+//todo 下面三个还没写
 EXPORT int get_row_slice(cudamat* source, cudamat* target, unsigned int start, unsigned int end) {
     int height = source->size[0];
     int width = source->size[1];
