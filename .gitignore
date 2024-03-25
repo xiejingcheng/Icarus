@@ -8,7 +8,5 @@
 .metadata/
 .conda/
 condaenv/
-DeZeroPackage/test/
-IcaZeroPackage/test/
+*test/
 RemoteSystemsTempFiles/
-cmakelearn/test1/build
