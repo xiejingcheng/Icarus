@@ -4,12 +4,15 @@ enable_language(CUDA)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CUDA_STANDARD 11)
 find_package(CUDA REQUIRED)
+
 #随着不同显卡类型更改
 set(CUDA_NVCC_FLAGS -arch=sm_61 -O3)
 
 set(SRC
     ${PROJECT_SOURCE_DIR}/cuda/ica.cu
     ${PROJECT_SOURCE_DIR}/cuda/utils/device.cu
+    ${PROJECT_SOURCE_DIR}/cuda/operator/gemm.cu
+    ${PROJECT_SOURCE_DIR}/cuda/oi/print.cu
     )
 set(INCLUDE_DIRS
     ${PROJECT_SOURCE_DIR}/cuda)
