@@ -12,8 +12,8 @@
 template <int BLOCK>
 __global__ void sgemmV1(int m, int n, int k, float *a, int lda, float *b, int ldb, float *c, int ldc) {
     //这里不是用 blockDim 因为固定分块大小 这个似乎就是一样的
-    int _x = blockIdx.x * BLOCK + threadIdx.x;
-    int _y = blockIdx.y * BLOCK + threadIdx.y;
+    int _m = blockIdx.x * BLOCK + threadIdx.x;
+    int _n = blockIdx.y * BLOCK + threadIdx.y;
     if (_m < m && _n < n){
         float sum = 0.f;
         for(int i = 0; i < k; i++){

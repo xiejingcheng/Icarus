@@ -1,12 +1,16 @@
 *.exe
 *.exp
 *.lib
+*.so
 *__pycache__/
 *build/
+*ckao/
 .idea/
 .vscode/
 .metadata/
 .conda/
 condaenv/
-*test/
+DeZeroPackage/test/
+IcaZeroPackage/test/
 RemoteSystemsTempFiles/
+cmakelearn/test1/build

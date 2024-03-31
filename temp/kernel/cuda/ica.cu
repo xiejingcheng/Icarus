@@ -7,6 +7,7 @@
 #include "operator/gemm.cuh"
 #include "data_error.cuh"
 #include "oi/print.cuh"
+#include "operator/fouroperations.cuh"
 
 extern "C" {
 
@@ -182,15 +183,96 @@ extern "C" {
 
 
     EXPORT int gemm_on_device(tensor* data1, tensor* data2, tensor* result) {
+        int err_code = 0;
+
+        if (data1->no_device || data2->no_device){
+            return ERROR_NOT_ON_DEVICE;
+        }
+
         if (data1->dims==2 && data1->dims==2){
-            gemm_on_device_2d(data1, data2, result);
-            return 0;
+            err_code = gemm_on_device_2d(data1, data2, result);
+            return err_code;
         }
         else{
             printf("Currently only support matrix multiplication.");
             return ERROR_INCOMLETE;
         }
+
+        if (checkCUDAError())
+            return CUDA_ERROR;
+        else
+            return 0;
+
     }
+
+    EXPORT int fft_on_device(tensor* data, tensor* result) {
+        int err_code = 0;
+
+        if (data->no_device){
+            return ERROR_NOT_ON_DEVICE;
+        }
+
+        if (data->dims==1){
+            err_code = fft_on_device_1d(data, result);
+            return err_code;
+        }
+        else{
+            printf("Currently only support 1d fft.");
+            return ERROR_INCOMLETE;
+        }
+
+        if (checkCUDAError())
+            return CUDA_ERROR;
+        else
+            return 0;
+
+    }
+
+    EXPORT int fourop_on_device(tensor* data1, tensor* data2, tensor* result, int op) {
+        int err_code = 0;
+        int eq = 1;
+
+        if (data1->no_device || data2->no_device){
+            return ERROR_NOT_ON_DEVICE;
+        }
+
+        for(int i = 0; i < data1->dim; i++){
+            if (data1->size[i] != data2->size[i]){
+                eq = 0;         
+            }
+        }
+
+        if (eq){
+            if (op == 0){
+                err_code = add_on_device_eq(data1, data2, result);
+            }
+            else if (op == 1){
+                err_code = sub_on_device_eq(data1, data2, result);
+            }
+            else if (op == 2){
+                err_code = mul_on_device_eq(data1, data2, result);
+            }
+            else if (op == 3){
+                err_code = div_on_device_eq(data1, data2, result);
+            }
+            else{
+                printf("Unsupported operation.");
+                return ERROR_UNSUPPORTED;
+            }
+            return err_code;
+        }else{
+            printf("Incompatible dimensions.");
+            return ERROR_INCOMLETE;
+        }
+
+        if (checkCUDAError())
+            return CUDA_ERROR;
+        else
+            return 0;
+        
+    }
+
+    
     
 
 

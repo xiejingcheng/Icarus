@@ -1,15 +1,14 @@
 #include <stdio.h>
-#include "head.h"
 
 int main()
 {
-    int a = 20;
+    int a = 200;
     int b = 12;
-    printf("a = %d, b = %d\n", a, b);
-    printf("a + b = %d\n", add(a, b));
-    printf("a - b = %d\n", subtract(a, b));
-    printf("a * b = %d\n", multiply(a, b));
-    printf("a / b = %f\n", divide(a, b));
-    scanf("%d", &a);
+    printf("a = %d, b = %d中文\n", a, b);
+    // printf("a + b = %d\n", add(a, b));
+    // printf("a - b = %d\n", subtract(a, b));
+    // printf("a * b = %d\n", multiply(a, b));
+    // printf("a / b = %f\n", divide(a, b));
+ 
     return 0;
 }

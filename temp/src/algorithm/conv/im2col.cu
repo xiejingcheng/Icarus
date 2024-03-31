@@ -29,8 +29,8 @@
 
 struct  
 {
-	__int64 tv_sec;
-	__int64 tv_usec;
+	long long tv_sec;
+	long long tv_usec;
 }timeval;
 
 
