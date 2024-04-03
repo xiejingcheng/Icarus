@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <cuda_runtime.h>
 #include "utils/device.cuh"
+#include "utils/random.cuh"
 #include "operator/gemm.cuh"
 #include "data_error.cuh"
 #include "oi/print.cuh"
@@ -185,7 +186,7 @@ extern "C" {
     EXPORT int gemm_on_device(tensor* data1, tensor* data2, tensor* result) {
         int err_code = 0;
 
-        if (data1->no_device || data2->no_device){
+        if (data1->on_device || data2->on_device){
             return ERROR_NOT_ON_DEVICE;
         }
 
@@ -205,38 +206,38 @@ extern "C" {
 
     }
 
-    EXPORT int fft_on_device(tensor* data, tensor* result) {
-        int err_code = 0;
+    // EXPORT int fft_on_device(tensor* data, tensor* result) {
+    //     int err_code = 0;
 
-        if (data->no_device){
-            return ERROR_NOT_ON_DEVICE;
-        }
+    //     if (data->on_device){
+    //         return ERROR_NOT_ON_DEVICE;
+    //     }
 
-        if (data->dims==1){
-            err_code = fft_on_device_1d(data, result);
-            return err_code;
-        }
-        else{
-            printf("Currently only support 1d fft.");
-            return ERROR_INCOMLETE;
-        }
+    //     if (data->dims==1){
+    //         err_code = fft_on_device_1d(data, result);
+    //         return err_code;
+    //     }
+    //     else{
+    //         printf("Currently only support 1d fft.");
+    //         return ERROR_INCOMLETE;
+    //     }
 
-        if (checkCUDAError())
-            return CUDA_ERROR;
-        else
-            return 0;
+    //     if (checkCUDAError())
+    //         return CUDA_ERROR;
+    //     else
+    //         return 0;
 
-    }
+    // }
 
     EXPORT int fourop_on_device(tensor* data1, tensor* data2, tensor* result, int op) {
         int err_code = 0;
         int eq = 1;
 
-        if (data1->no_device || data2->no_device){
+        if (data1->on_device || data2->on_device){
             return ERROR_NOT_ON_DEVICE;
         }
 
-        for(int i = 0; i < data1->dim; i++){
+        for(int i = 0; i < data1->dims; i++){
             if (data1->size[i] != data2->size[i]){
                 eq = 0;         
             }
