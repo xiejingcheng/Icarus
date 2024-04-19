@@ -1,7 +1,7 @@
 #include "gemm.cuh"
 #include <cuda_runtime.h>
 
-EXPORT int gemm_on_device_2d(tensor* data1, tensor* data2, tensor* result){
+EXPORT int gemm_on_device_2d(matrix* data1, matrix* data2, matrix* result){
     constexpr int BLOCK = 16;
     int m = data1->size[0];
     int n = data2->size[1];

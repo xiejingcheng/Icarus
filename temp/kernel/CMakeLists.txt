@@ -12,10 +12,14 @@ set(SRC
     ${PROJECT_SOURCE_DIR}/cuda/ica.cu
     ${PROJECT_SOURCE_DIR}/cuda/utils/device.cu
     ${PROJECT_SOURCE_DIR}/cuda/operator/gemm.cu
+    ${PROJECT_SOURCE_DIR}/cuda/operator/non_optimized.cu
     ${PROJECT_SOURCE_DIR}/cuda/oi/print.cu
     ${PROJECT_SOURCE_DIR}/cuda/utils/random.cu
+    ${PROJECT_SOURCE_DIR}/cuda/utils/device.cu
     )
 set(INCLUDE_DIRS
     ${PROJECT_SOURCE_DIR}/cuda)
 
 cuda_add_library(ica SHARED ${INCLUDE_DIRS} ${SRC})
+
+target_link_libraries(ica curand)

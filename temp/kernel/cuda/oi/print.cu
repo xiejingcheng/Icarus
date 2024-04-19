@@ -1,12 +1,8 @@
 #include "print.cuh"
 #include <stdio.h>
 
-EXPORT int print_tensor(tensor* data){
-    int len = 1;
-
-    for(int dim = 0; dim < data->dims; dim++){
-        len *= data->size[dim];
-    }
+EXPORT int print_tensor(matrix* data){
+    int len = data->size[0] * data->size[1];
 
     if (data->on_device) {
         return ERROR_NOT_ON_HOST;

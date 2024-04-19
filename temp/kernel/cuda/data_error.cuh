@@ -31,14 +31,14 @@
 
 
 
-struct tensor {
+struct matrix {
     float* data_host;
     float* data_device;
-    int on_device;
-    int on_host;
+    int on_device = 0;
+    int on_host = 1;
     int dims;
-    int size[10];
-    int is_trans; // 0 or 1
+    int size[2];
+    int is_trans;
     int owns_data;
 };
 

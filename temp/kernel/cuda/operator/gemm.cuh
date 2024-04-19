@@ -1,7 +1,7 @@
 #include "../data_error.cuh"
 
 extern "C" {
-    EXPORT int gemm_on_device_2d(tensor* data1, tensor* data2, tensor* result);
+    EXPORT int gemm_on_device_2d(matrix* data1, matrix* data2, matrix* result);
 };
 
 template <int BLOCK>
